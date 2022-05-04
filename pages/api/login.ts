@@ -11,12 +11,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     throw new Error("SECRET not set");
   }
 
+  const body = JSON.parse(req.body);
+
   if (
-    req.body.email !== process.env.ADMIN_EMAIL ||
-    req.body.password !== process.env.ADMIN_PASSWORD
+    body.email !== process.env.ADMIN_EMAIL ||
+    body.password !== process.env.ADMIN_PASSWORD
   ) {
-    res.status(401).send({ message: "No permission" });
+    res.status(401).send({ message: "Invalid credentials" });
+    return;
   }
 
-  return jwt.sign({ role: "admin" }, process.env.SECRET, { expiresIn: "1h" });
+  res.json({
+    accessToken: jwt.sign({ role: "admin" }, process.env.SECRET, {
+      expiresIn: "1h",
+    }),
+  });
 }

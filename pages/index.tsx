@@ -1,41 +1,33 @@
-import {
-  Button,
-  Card,
-  Grid,
-  Group,
-  Select,
-  Text,
-  TextInput,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { showNotification } from "@mantine/notifications";
-import type { NextPage } from "next";
-import { useState } from "react";
+import { Button, Card, Grid, Group, Select, Text, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { showNotification } from '@mantine/notifications';
+import type { NextPage } from 'next';
+import { useState } from 'react';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm({
     initialValues: {
-      name: "",
-      course: "",
-      year: "",
+      name: '',
+      course: '',
+      year: '',
     },
   });
 
   const submit = async (values: typeof form.values) => {
     setIsLoading(true);
     try {
-      await fetch("/api/registrations", {
-        method: "POST",
+      await fetch('/api/registrations', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(values),
       });
       showNotification({
-        color: "green",
-        title: "Success",
-        message: "Thank you for registering to OLRA College Night",
+        color: 'green',
+        title: 'Success',
+        message: 'Thank you for registering to OLRA College Night',
       });
       form.reset();
     } finally {
@@ -45,25 +37,20 @@ const Home: NextPage = () => {
 
   return (
     <Grid>
-      <Grid.Col offset={3} span={6}>
-        <Card radius="lg" py="lg">
+      <Grid.Col offsetLg={3} lg={6}>
+        <Card>
           <Text size="lg" mb="md">
             OLRA College Night Registration Form
           </Text>
           <form onSubmit={form.onSubmit(submit)}>
-            <TextInput required label="Name" {...form.getInputProps("name")} />
+            <TextInput required label="Name" {...form.getInputProps('name')} />
             <Select
               required
               label="Course"
-              data={["BS Entrep", "BS Early Childhood Education"]}
-              {...form.getInputProps("course")}
+              data={['BS Entrep', 'BS Early Childhood Education']}
+              {...form.getInputProps('course')}
             />
-            <Select
-              required
-              label="Year"
-              data={["1", "2", "3", "4"]}
-              {...form.getInputProps("year")}
-            />
+            <Select required label="Year" data={['1', '2', '3', '4']} {...form.getInputProps('year')} />
 
             <Group position="right" mt="md">
               <Button type="submit" loading={isLoading}>
