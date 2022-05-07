@@ -1,10 +1,12 @@
-import { Button, Card, Center, Grid, Group, PasswordInput, TextInput, Title } from '@mantine/core';
+import { Button, Card, Grid, Group, PasswordInput, TextInput, ThemeIcon, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
-import { useState } from 'react';
-import { useCookies } from 'react-cookie';
 import { addHours } from 'date-fns';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { Scan } from 'tabler-icons-react';
+import Logo from '../../components/Logo';
 
 const AdminLogin = () => {
   const router = useRouter();
@@ -50,7 +52,8 @@ const AdminLogin = () => {
   return (
     <>
       <Grid>
-        <Grid.Col span={12}>
+        <Grid.Col offsetLg={3} lg={6}>
+          <Logo />
           <Card>
             <Title sx={{ textAlign: 'center' }} order={2}>
               Admin Login

@@ -1,8 +1,8 @@
-import { Burger, Divider, Group, Menu, Title } from '@mantine/core';
+import { Burger, Group, Menu, Title } from '@mantine/core';
 import Router from 'next/router';
 import { FC, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { DoorExit, Home, Scan } from 'tabler-icons-react';
+import Logo from './Logo';
 
 const Nav: FC = () => {
   const [, , removeCookie] = useCookies(['access_token']);
@@ -15,18 +15,15 @@ const Nav: FC = () => {
 
   return (
     <>
-      <Group position="apart">
-        <Title order={2}>OLRA College Night</Title>
+      <Group align="center" position="apart">
+        <Logo />
         <Menu
           position="left"
           control={<Burger opened={isNavOpen} color="white" />}
           onOpen={() => setIsNavOpen(true)}
           onClose={() => setIsNavOpen(false)}
         >
-          <Menu.Item icon={<Home size={14} />}>Home</Menu.Item>
-          <Menu.Item icon={<Scan size={14} />}>QR Scanner</Menu.Item>
-          <Divider />
-          <Menu.Item onClick={() => logout()} color="red" icon={<DoorExit size={14} />}>
+          <Menu.Item onClick={() => logout()} color="red">
             Logout
           </Menu.Item>
         </Menu>

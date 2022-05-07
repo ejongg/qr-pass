@@ -1,21 +1,28 @@
-import { ActionIcon, Card, Group, Table } from '@mantine/core';
+import { ActionIcon, Button, Card, Group, Table, Text, TextInput } from '@mantine/core';
 import { format, parseISO } from 'date-fns';
 import { GetServerSideProps, NextPage } from 'next';
-import { Coin, Door } from 'tabler-icons-react';
+import { Coin, Scan, UserCheck } from 'tabler-icons-react';
 import Nav from '../../components/Nav';
+import QrScanModal from '../../components/QrScanModal';
 
 const Dashboard: NextPage<{ registrations: Registration[] }> = ({ registrations }) => {
   const rows = registrations.map((r) => (
     <tr key={r._id}>
-      <td>{r.name}</td>
       <td>
-        {r.course} {r.year}
+        <Text weight="bold">{r.name}</Text>
+        <Text size="xs">
+          {r.course} {r.year}
+        </Text>
       </td>
       <td>
-        <Group spacing="sm">
+        <Group align="center" position="right" spacing="xs">
+          <ActionIcon color="gray">
+            <Coin />
+          </ActionIcon>
+          <ActionIcon color="gray">
+            <UserCheck />
+          </ActionIcon>
           {format(parseISO(r.createdAt), 'MM/dd')}
-          <Coin color="gray" />
-          <Door color="gray" />
         </Group>
       </td>
     </tr>
@@ -25,12 +32,15 @@ const Dashboard: NextPage<{ registrations: Registration[] }> = ({ registrations 
     <>
       <Nav></Nav>
       <Card mt="md">
+        <Group position="apart" mb="lg">
+          <TextInput radius="xl" placeholder="Search" />
+          <QrScanModal />
+        </Group>
         <Table>
           <thead>
             <tr>
               <th>Name</th>
-              <th>Course</th>
-              <th>Registration</th>
+              <th style={{ textAlign: 'right' }}>Registration</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>

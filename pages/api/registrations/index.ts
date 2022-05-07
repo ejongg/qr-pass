@@ -1,13 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Collection, database } from '../../../db';
+import * as crypto from 'crypto';
 
-export default (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
         case 'POST':
-            handlePOST(req, res);
+            await handlePOST(req, res);
             break;
         case 'GET':
-            handleGET(req, res);
+            await handleGET(req, res);
             break;
         default:
             res.status(404).end();
@@ -17,10 +18,16 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
 async function handlePOST(req: NextApiRequest, res: NextApiResponse) {
     const [db, client] = await database();
     try {
+        const now = new Date();
+        const qrcode = crypto
+            .createHash('md5')
+            .update(req.body.name + req.body.course + req.body.year + now.toISOString())
+            .digest('hex');
         const inserted = await db.collection(Collection.REGISTRATIONS).insertOne({
             ...req.body,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            qrcode,
+            createdAt: now,
+            updatedAt: now,
         });
         const registration = await db.collection(Collection.REGISTRATIONS).findOne({ _id: inserted.insertedId });
         res.status(201).json(registration);
