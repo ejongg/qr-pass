@@ -1,4 +1,4 @@
-import { Button, Card, Grid, Group, Select, Text, TextInput, Title } from '@mantine/core';
+import { Alert, Button, Card, Grid, Group, Text, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import type { NextPage } from 'next';
@@ -8,13 +8,11 @@ import QrDisplay from '../components/QrDisplay';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [registered, setRegistered] = useState<{ name: string; qrcode: string } | null>(null);
+  const [registered, setRegistered] = useState<{ name: string; course: string; qrcode: string } | null>(null);
 
   const form = useForm({
     initialValues: {
       name: '',
-      course: '',
-      year: '',
     },
   });
 
@@ -28,9 +26,19 @@ const Home: NextPage = () => {
         },
         body: JSON.stringify(values),
       });
+
+      if (res.status !== 201) {
+        showNotification({
+          title: 'Error',
+          message: (await res.json()).message,
+          color: 'red',
+        });
+        return;
+      }
+
       form.reset();
       const body = await res.json();
-      setRegistered({ name: body.name, qrcode: body.qrcode });
+      setRegistered({ name: body.name, qrcode: body.qrcode, course: body.course });
     } finally {
       setIsLoading(false);
     }
@@ -47,14 +55,19 @@ const Home: NextPage = () => {
                 OLRA College Night
               </Title>
               <form onSubmit={form.onSubmit(submit)}>
-                <TextInput required label="Name" {...form.getInputProps('name')} />
-                <Select
-                  required
-                  label="Course"
-                  data={['BS Entrep', 'BS Early Childhood Education']}
-                  {...form.getInputProps('course')}
-                />
-                <Select required label="Year" data={['1', '2', '3', '4']} {...form.getInputProps('year')} />
+                <Alert title="IMPORTANT" color="blue" my="lg">
+                  <Text size="sm" mb="sm">
+                    Please input your name in the following format <b>LASTNAME, FIRSTNAME MIDDLENAME</b>.
+                  </Text>
+                  <Text size="sm" mb="sm">
+                    If the system cannot find your name please contact our admin in our facebook group.
+                  </Text>
+                  <Text size="sm" mb="sm">
+                    After registration save the QR Code that will be shown. It will be used for your attendance in the
+                    event.
+                  </Text>
+                </Alert>
+                <TextInput required placeholder="Dela Cruz, Juan Garcia" label="Name" {...form.getInputProps('name')} />
 
                 <Group position="right" mt="md">
                   <Button type="submit" loading={isLoading}>
@@ -64,7 +77,7 @@ const Home: NextPage = () => {
               </form>
             </>
           ) : (
-            <QrDisplay name={registered.name} qrcode={registered.qrcode} />
+            <QrDisplay props={registered} />
           )}
         </Card>
       </Grid.Col>

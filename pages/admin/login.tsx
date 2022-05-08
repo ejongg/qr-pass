@@ -35,6 +35,7 @@ const AdminLogin = () => {
         });
         setCookies('access_token', body.accessToken, {
           expires: addHours(new Date(), 1),
+          sameSite: true,
         });
         router.push('/admin/dashboard');
       } else {
