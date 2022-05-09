@@ -1,11 +1,9 @@
-import { Button, Card, Grid, Group, PasswordInput, TextInput, ThemeIcon, Title } from '@mantine/core';
+import { Button, Card, Grid, Group, PasswordInput, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { showNotification } from '@mantine/notifications';
 import { addHours } from 'date-fns';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { Scan } from 'tabler-icons-react';
 import Logo from '../../components/Logo';
 
 const AdminLogin = () => {
@@ -26,23 +24,13 @@ const AdminLogin = () => {
         method: 'POST',
         body: JSON.stringify(data),
       });
-      const body = await res.json();
+
       if (res.status === 200) {
-        showNotification({
-          title: 'Success',
-          message: 'Login successful',
-          color: 'green',
-        });
+        router.push('/admin/dashboard');
+        const body = await res.json();
         setCookies('access_token', body.accessToken, {
           expires: addHours(new Date(), 1),
           sameSite: true,
-        });
-        router.push('/admin/dashboard');
-      } else {
-        showNotification({
-          title: 'Login failed',
-          message: body.message,
-          color: 'red',
         });
       }
     } finally {

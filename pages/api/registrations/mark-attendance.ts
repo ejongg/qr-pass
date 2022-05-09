@@ -1,14 +1,12 @@
-import { ObjectId } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Collection, database } from '../../../db';
 import { requireToken } from '../../../services/token';
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'PUT') {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+    if (req.method !== 'POST') {
         res.status(404).end();
         return;
     }
-
     try {
         requireToken(req);
     } catch (err) {
@@ -18,29 +16,14 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
     const [db, client] = await database();
     try {
-        const student = await db.collection(Collection.STUDENTS).findOne({ _id: new ObjectId(req.query.id as string) });
+        const { qrcode } = JSON.parse(req.body);
+        console.log(qrcode);
+        const student = await db.collection(Collection.STUDENTS).findOne({ qrcode });
         if (!student) {
             res.status(400).end('Student not found');
             return;
         }
-
-        const payload = JSON.parse(req.body);
-
-        for (const key of Object.keys(payload)) {
-            if (!['attendedAt', 'paidAt'].includes(key)) {
-                res.status(400).end(`Cannot update ${key}`);
-                return;
-            }
-        }
-
-        await db.collection(Collection.STUDENTS).updateOne(
-            {
-                _id: student._id,
-            },
-            {
-                $set: payload,
-            }
-        );
+        await db.collection(Collection.STUDENTS).updateOne({ _id: student._id }, { $set: { attendedAt: new Date() } });
         const updated = await db.collection(Collection.STUDENTS).findOne({ _id: student._id });
         res.json(updated);
     } catch (err) {
@@ -49,4 +32,4 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     } finally {
         await client.close();
     }
-}
+};

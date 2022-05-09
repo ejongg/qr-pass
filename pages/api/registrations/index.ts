@@ -14,7 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
-        if (student.registration) {
+        if (student.qrcode) {
             res.status(201).json(student);
             return;
         }
@@ -29,13 +29,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             { _id: student._id },
             {
                 $set: {
-                    registration: {
-                        paidAt: null,
-                        attendedAt: null,
-                        qrcode,
-                        createdAt: now,
-                        updatedAt: now,
-                    },
+                    qrcode,
+                    registeredAt: now,
                 },
             }
         );

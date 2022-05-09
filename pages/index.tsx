@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Center, Grid, Group, Select, Text, Title } from '@mantine/core';
+import { Alert, Button, Card, Center, Grid, Group, Loader, Select, Text, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { debounce } from 'lodash';
 import type { NextPage } from 'next';
@@ -7,9 +7,11 @@ import Logo from '../components/Logo';
 import QrDisplay from '../components/QrDisplay';
 import { useScreenshot, createFileName } from 'use-react-screenshot';
 import { Student } from '../api-interface';
+import { User } from 'tabler-icons-react';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [students, setStudents] = useState([]);
   const [registered, setRegistered] = useState<Student | null>(null);
   const [, takeScreenShot] = useScreenshot();
@@ -48,17 +50,21 @@ const Home: NextPage = () => {
     if (!value || value.length < 3) {
       return;
     }
+    setIsFetching(true);
+
     const res = await fetch(`/api/students?search=${value}`, {
       method: 'GET',
     });
 
     if (res.status !== 200) {
-      console.log(await res.text());
-      return [];
+      setStudents([]);
+      setIsFetching(false);
+      return;
     }
 
     const students = (await res.json()).map((s: any) => s.name);
     setStudents(students);
+    setIsFetching(false);
   };
 
   const download = (image: any) => {
@@ -97,6 +103,7 @@ const Home: NextPage = () => {
                   placeholder="Enter your last name. Type atleast 3 letters"
                   data={students}
                   onSearchChange={debounce(search, 1000)}
+                  icon={isFetching ? <Loader size="xs" /> : <User />}
                   {...form.getInputProps('name')}
                 />
 

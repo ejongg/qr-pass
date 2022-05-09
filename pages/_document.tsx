@@ -1,5 +1,5 @@
-import { createGetInitialProps } from "@mantine/next";
-import Document, { Head, Html, Main, NextScript } from "next/document";
+import { createGetInitialProps } from '@mantine/next';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 
 const getInitialProps = createGetInitialProps();
 
@@ -10,7 +10,7 @@ export default class _Document extends Document {
     return (
       <Html>
         <Head />
-        <body style={{ backgroundColor: "#163057", color: "#ffffff" }}>
+        <body style={{ backgroundColor: '#b0cbf7', color: '#ffffff' }}>
           <Main />
           <NextScript />
         </body>

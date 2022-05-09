@@ -19,7 +19,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
                   }
                 : {},
             {
-                sort: { 'registration.createdAt': 'desc' },
+                sort: { registeredAt: 'desc' },
             }
         );
         res.json(await cursor.toArray());

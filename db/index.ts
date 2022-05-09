@@ -17,11 +17,8 @@ export interface IStudent {
     _id: ObjectId;
     name: string;
     course: string;
-    registration?: {
-        paidAt: Date | null;
-        attendedAt: Date | null;
-        qrcode: string;
-        createdAt: Date;
-        updatedAt: Date;
-    };
+    paidAt: Date | null;
+    attendedAt: Date | null;
+    qrcode?: string;
+    registeredAt?: Date;
 }
