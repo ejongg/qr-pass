@@ -1,14 +1,18 @@
-import { Alert, Button, Card, Grid, Group, Text, TextInput, Title } from '@mantine/core';
+import { Alert, Button, Card, Center, Grid, Group, Select, Text, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { showNotification } from '@mantine/notifications';
+import { debounce } from 'lodash';
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Logo from '../components/Logo';
 import QrDisplay from '../components/QrDisplay';
+import { useScreenshot, createFileName } from 'use-react-screenshot';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [students, setStudents] = useState([]);
   const [registered, setRegistered] = useState<{ name: string; course: string; qrcode: string } | null>(null);
+  const [, takeScreenShot] = useScreenshot();
+  const qrRef = useRef(null);
 
   const form = useForm({
     initialValues: {
@@ -28,11 +32,6 @@ const Home: NextPage = () => {
       });
 
       if (res.status !== 201) {
-        showNotification({
-          title: 'Error',
-          message: (await res.json()).message,
-          color: 'red',
-        });
         return;
       }
 
@@ -43,6 +42,36 @@ const Home: NextPage = () => {
       setIsLoading(false);
     }
   };
+
+  const search = async (value: string) => {
+    if (!value || value.length < 3) {
+      return;
+    }
+    const res = await fetch(`/api/students?search=${value}`, {
+      method: 'GET',
+    });
+
+    if (res.status !== 200) {
+      console.log(await res.text());
+      return [];
+    }
+
+    const students = (await res.json()).map((s: any) => s.name);
+    setStudents(students);
+  };
+
+  const download = (image: any) => {
+    const a = document.createElement('a');
+    a.href = image;
+    a.download = createFileName(
+      'jpg',
+      `olra_college_night_${registered?.name.toLowerCase().replaceAll(',', '').replaceAll(' ', '_')}` ||
+        'olra_college_night'
+    );
+    a.click();
+  };
+
+  const downloadScreenshot = () => takeScreenShot(qrRef.current).then(download);
 
   return (
     <Grid>
@@ -56,30 +85,50 @@ const Home: NextPage = () => {
               </Title>
               <form onSubmit={form.onSubmit(submit)}>
                 <Alert title="IMPORTANT" color="blue" my="lg">
-                  <Text size="sm" mb="sm">
-                    Please input your name in the following format <b>LASTNAME, FIRSTNAME MIDDLENAME</b>.
-                  </Text>
-                  <Text size="sm" mb="sm">
-                    If the system cannot find your name please contact our admin in our facebook group.
-                  </Text>
-                  <Text size="sm" mb="sm">
+                  <Text size="sm">
                     After registration save the QR Code that will be shown. It will be used for your attendance in the
                     event.
                   </Text>
                 </Alert>
-                <TextInput required placeholder="Dela Cruz, Juan Garcia" label="Name" {...form.getInputProps('name')} />
+
+                <Select
+                  searchable
+                  clearable
+                  placeholder="Enter your last name. Type atleast 3 letters"
+                  data={students}
+                  onSearchChange={debounce(search, 1000)}
+                  {...form.getInputProps('name')}
+                />
 
                 <Group position="right" mt="md">
-                  <Button type="submit" loading={isLoading}>
+                  <Button disabled={!form.values.name} type="submit" loading={isLoading}>
                     Register
                   </Button>
                 </Group>
               </form>
             </>
           ) : (
-            <QrDisplay props={registered} />
+            <div ref={qrRef}>
+              <QrDisplay props={registered} />
+            </div>
           )}
         </Card>
+        {registered && (
+          <Group direction="column" align="center" mt="lg">
+            <Button onClick={() => downloadScreenshot()} color="green">
+              Download
+            </Button>
+            <Button
+              onClick={() => {
+                setRegistered(null);
+                setStudents([]);
+              }}
+              variant="subtle"
+            >
+              Back
+            </Button>
+          </Group>
+        )}
       </Grid.Col>
     </Grid>
   );
