@@ -1,7 +1,6 @@
 import { Db, MongoClient, ObjectId, ServerApiVersion } from 'mongodb';
 
 export enum Collection {
-    REGISTRATIONS = 'registrations',
     STUDENTS = 'students',
 }
 
@@ -18,13 +17,11 @@ export interface IStudent {
     _id: ObjectId;
     name: string;
     course: string;
-}
-
-export interface IRegistration {
-    _id: ObjectId;
-    name: string;
-    course: string;
-    createdAt: Date;
-    updatedAt: Date;
-    qrcode: string;
+    registration?: {
+        paidAt?: Date;
+        attendedAt?: Date;
+        qrcode: string;
+        createdAt: Date;
+        updatedAt: Date;
+    };
 }

@@ -1,19 +1,20 @@
 import { Box, Stack, Title } from '@mantine/core';
 import { FC } from 'react';
 import QRCode from 'react-qr-code';
+import { Student } from '../api-interface';
 
-const QrDisplay: FC<{ props: { name: string; course: string; qrcode: string } }> = ({ props }) => {
+const QrDisplay: FC<{ student: Student }> = ({ student }) => {
   return (
     <>
       <Stack align="center">
         <Title align="center" order={2}>
-          Thank you for registering
+          Thank you for confirming
         </Title>
-        <QRCode value={props.qrcode} />
+        <QRCode value={student.registration?.qrcode || ''} />
         <Box style={{ textAlign: 'center' }}>
-          <Title mb={0}>{props.name}</Title>
+          <Title mb={0}>{student.name}</Title>
           <Title mt={0} order={4} color="gray">
-            {props.course}
+            {student.course}
           </Title>
         </Box>
       </Stack>

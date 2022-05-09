@@ -9,12 +9,19 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     const [db, client] = await database();
     try {
         const { search } = req.query;
-        const cursor = db.collection(Collection.STUDENTS).find({
-            name: {
-                $regex: search,
-                $options: 'i',
-            },
-        });
+        const cursor = db.collection(Collection.STUDENTS).find(
+            search
+                ? {
+                      name: {
+                          $regex: search,
+                          $options: 'i',
+                      },
+                  }
+                : {},
+            {
+                sort: { 'registration.createdAt': 'desc' },
+            }
+        );
         res.json(await cursor.toArray());
     } catch (err) {
         res.status(400).end();

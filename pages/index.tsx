@@ -6,11 +6,12 @@ import { useRef, useState } from 'react';
 import Logo from '../components/Logo';
 import QrDisplay from '../components/QrDisplay';
 import { useScreenshot, createFileName } from 'use-react-screenshot';
+import { Student } from '../api-interface';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [students, setStudents] = useState([]);
-  const [registered, setRegistered] = useState<{ name: string; course: string; qrcode: string } | null>(null);
+  const [registered, setRegistered] = useState<Student | null>(null);
   const [, takeScreenShot] = useScreenshot();
   const qrRef = useRef(null);
 
@@ -36,8 +37,8 @@ const Home: NextPage = () => {
       }
 
       form.reset();
-      const body = await res.json();
-      setRegistered({ name: body.name, qrcode: body.qrcode, course: body.course });
+      const body: Student = await res.json();
+      setRegistered(body);
     } finally {
       setIsLoading(false);
     }
@@ -86,8 +87,7 @@ const Home: NextPage = () => {
               <form onSubmit={form.onSubmit(submit)}>
                 <Alert title="IMPORTANT" color="blue" my="lg">
                   <Text size="sm">
-                    After registration save the QR Code that will be shown. It will be used for your attendance in the
-                    event.
+                    After confirmation, save the QR Code that will be shown. It will be your pass in the event.
                   </Text>
                 </Alert>
 
@@ -101,15 +101,15 @@ const Home: NextPage = () => {
                 />
 
                 <Group position="right" mt="md">
-                  <Button disabled={!form.values.name} type="submit" loading={isLoading}>
-                    Register
+                  <Button color="green" disabled={!form.values.name} type="submit" loading={isLoading}>
+                    Confirm
                   </Button>
                 </Group>
               </form>
             </>
           ) : (
             <div ref={qrRef}>
-              <QrDisplay props={registered} />
+              <QrDisplay student={registered} />
             </div>
           )}
         </Card>
