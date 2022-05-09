@@ -18,8 +18,8 @@ export interface IStudent {
     name: string;
     course: string;
     registration?: {
-        paidAt?: Date;
-        attendedAt?: Date;
+        paidAt: Date | null;
+        attendedAt: Date | null;
         qrcode: string;
         createdAt: Date;
         updatedAt: Date;

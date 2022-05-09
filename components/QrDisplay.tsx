@@ -4,6 +4,8 @@ import QRCode from 'react-qr-code';
 import { Student } from '../api-interface';
 
 const QrDisplay: FC<{ student: Student }> = ({ student }) => {
+  console.log(student.registration?.qrcode);
+
   return (
     <>
       <Stack align="center">

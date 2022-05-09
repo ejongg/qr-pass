@@ -11,6 +11,7 @@ const QrScanModal = () => {
 
   const onSuccess = (result: QrcodeSuccessCallback) => {
     console.log(result);
+    setScanned(true);
   };
 
   return (
@@ -26,7 +27,14 @@ const QrScanModal = () => {
         Scan QR
       </Button>
       <Modal opened={isOpen} onClose={() => setIsOpen(false)} title="QR Scan">
-        <QrReader onSuccess={onSuccess} />
+        <>
+          {!scanned && <QrReader onSuccess={onSuccess} />}
+          {scanned && (
+            <Button onClick={() => setScanned(false)} variant="subtle">
+              Scan again
+            </Button>
+          )}
+        </>
       </Modal>
     </>
   );

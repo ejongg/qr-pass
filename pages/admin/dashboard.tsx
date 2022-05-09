@@ -16,8 +16,9 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const Dashboard: NextPage<{ students: Student[] }> = ({ students }) => {
+const Dashboard: NextPage<{ initialData: Student[] }> = ({ initialData }) => {
   const { classes } = useStyles();
+  const [students, setStudents] = useState<Student[]>([]);
   const [filtered, setFiltered] = useState<Student[]>([]);
 
   const search = (value: string) => {
@@ -27,12 +28,23 @@ const Dashboard: NextPage<{ students: Student[] }> = ({ students }) => {
     setFiltered(searched);
   };
 
+  const updateStudent = async (student: Student, prop: 'paidAt' | 'attendedAt') => {
+    const res = await fetch(`/api/students/${student._id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ [prop]: student.registration![prop] ? null : new Date() }),
+    });
+    const body = await res.json();
+    setStudents(students.map((s) => (s._id === body._id ? Object.assign(s, body) : s)));
+    setFiltered(filtered.map((s) => (s._id === body._id ? Object.assign(s, body) : s)));
+  };
+
   useEffect(() => {
-    setFiltered(students);
+    setFiltered(initialData);
+    setStudents(initialData);
   }, []);
 
-  const rows = filtered.map((student, index) => (
-    <tr className={!student.registration ? classes.unregistered : ''} key={index}>
+  const rows = filtered.map((student) => (
+    <tr className={!student.registration ? classes.unregistered : ''} key={student._id}>
       <td className={classes.name}>
         <Text weight="bold">{student.name}</Text>
         <Text size="xs">{student.course}</Text>
@@ -40,10 +52,16 @@ const Dashboard: NextPage<{ students: Student[] }> = ({ students }) => {
       <td>
         {student.registration ? (
           <Group align="center" position="right" spacing="xs">
-            <ActionIcon color="gray">
+            <ActionIcon
+              color={student.registration.paidAt ? 'green' : 'gray'}
+              onClick={() => updateStudent(student, 'paidAt')}
+            >
               <Coin />
             </ActionIcon>
-            <ActionIcon color="gray">
+            <ActionIcon
+              color={student.registration.attendedAt ? 'green' : 'gray'}
+              onClick={() => updateStudent(student, 'attendedAt')}
+            >
               <UserCheck />
             </ActionIcon>
             {format(parseISO(student.registration!.createdAt), 'MM/dd')}
@@ -89,7 +107,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const students: Student[] = await res.json();
   return {
     props: {
-      students,
+      initialData: students,
     },
   };
 };

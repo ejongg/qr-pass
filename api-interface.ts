@@ -3,8 +3,8 @@ export interface Student {
     name: string;
     course: string;
     registration?: {
-        paidAt?: string;
-        attendedAt?: string;
+        paidAt: string | null;
+        attendedAt: string | null;
         qrcode: string;
         createdAt: string;
         updatedAt: string;

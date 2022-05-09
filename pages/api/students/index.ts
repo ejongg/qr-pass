@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Collection, database } from '../../db';
+import { Collection, database } from '../../../db';
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
@@ -25,6 +25,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         res.json(await cursor.toArray());
     } catch (err) {
         res.status(400).end();
+        throw err;
     } finally {
         await client.close();
     }

@@ -22,7 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const now = new Date();
         const qrcode = crypto
             .createHash('md5')
-            .update(student.name + student.course + process.env.SECRET)
+            .update(student.name + student.course + now + process.env.SECRET)
             .digest('hex');
 
         await db.collection(Collection.STUDENTS).updateOne(
@@ -30,6 +30,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             {
                 $set: {
                     registration: {
+                        paidAt: null,
+                        attendedAt: null,
                         qrcode,
                         createdAt: now,
                         updatedAt: now,
@@ -37,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 },
             }
         );
-        res.status(201).json(student);
+        res.status(201).json(await db.collection(Collection.STUDENTS).findOne<IStudent>({ _id: student._id }));
     } catch (err) {
         res.status(400).end();
         throw err;
