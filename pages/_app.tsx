@@ -1,9 +1,8 @@
-import { Container, MantineProvider } from "@mantine/core";
-import { NotificationsProvider } from "@mantine/notifications";
-import { AppProps } from "next/app";
-import Head from "next/head";
-import { CookiesProvider } from "react-cookie";
-import { Session } from "../context/session";
+import { Container, MantineProvider } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import { CookiesProvider } from 'react-cookie';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -12,24 +11,24 @@ export default function App(props: AppProps) {
     <CookiesProvider>
       <Head>
         <title>OLRA College Night</title>
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
-        />
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
 
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
         theme={{
-          colorScheme: "light",
+          colorScheme: 'light',
+        }}
+        defaultProps={{
+          Button: {
+            radius: 'xl',
+          },
         }}
       >
         <NotificationsProvider position="top-right">
           <Container py="md">
-            <Session>
-              <Component {...pageProps} />
-            </Session>
+            <Component {...pageProps} />
           </Container>
         </NotificationsProvider>
       </MantineProvider>

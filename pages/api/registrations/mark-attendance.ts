@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Collection, database } from '../../../db';
-import { requireToken } from '../../../services/token';
+import { requireToken } from '../../../lib/token';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'POST') {

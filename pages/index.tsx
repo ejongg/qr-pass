@@ -1,13 +1,13 @@
-import { Alert, Button, Card, Center, Grid, Group, Loader, Select, Text, Title } from '@mantine/core';
+import { Alert, Button, Card, Grid, Group, Loader, Select, Text, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { debounce } from 'lodash';
 import type { NextPage } from 'next';
 import { useRef, useState } from 'react';
+import { Search } from 'tabler-icons-react';
+import { createFileName, useScreenshot } from 'use-react-screenshot';
+import { Student } from '../api-interface';
 import Logo from '../components/Logo';
 import QrDisplay from '../components/QrDisplay';
-import { useScreenshot, createFileName } from 'use-react-screenshot';
-import { Student } from '../api-interface';
-import { User } from 'tabler-icons-react';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -103,12 +103,12 @@ const Home: NextPage = () => {
                   placeholder="Enter your last name. Type atleast 3 letters"
                   data={students}
                   onSearchChange={debounce(search, 1000)}
-                  icon={isFetching ? <Loader size="xs" /> : <User />}
+                  icon={isFetching ? <Loader size="xs" /> : <Search />}
                   {...form.getInputProps('name')}
                 />
 
                 <Group position="right" mt="md">
-                  <Button color="green" disabled={!form.values.name} type="submit" loading={isLoading}>
+                  <Button color="blue" disabled={!form.values.name} type="submit" loading={isLoading}>
                     Confirm
                   </Button>
                 </Group>

@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Collection, database } from '../../../db';
-import { requireToken } from '../../../services/token';
+import { requireToken } from '../../../lib/token';
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'PUT') {

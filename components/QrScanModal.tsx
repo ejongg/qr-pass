@@ -1,11 +1,15 @@
 import { Alert, Button, Group, Loader, Modal, Text, Title } from '@mantine/core';
 import { QrcodeSuccessCallback } from 'html5-qrcode/esm/core';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { Scan } from 'tabler-icons-react';
 import { Student } from '../api-interface';
+import { studentContext } from '../context/students';
 import QrReader from './QrReader';
 
 const QrScanModal = () => {
+  const { students, setStudents } = useContext(studentContext);
+  const [{ access_token }] = useCookies(['access_token']);
   const [isOpen, setIsOpen] = useState(false);
   const [scanned, setScanned] = useState(false);
   const [success, setSuccess] = useState<Student | null>(null);
@@ -19,11 +23,15 @@ const QrScanModal = () => {
         body: JSON.stringify({
           qrcode: result,
         }),
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
       });
 
       if (res.status === 200) {
         const body = await res.json();
         setSuccess(body);
+        setStudents(students.map((s) => (s._id === body._id ? Object.assign(s, body) : s)));
       }
     })();
   };
