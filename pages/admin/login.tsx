@@ -1,10 +1,11 @@
 import { Button, Card, Grid, Group, PasswordInput, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { addHours } from 'date-fns';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
-import Logo from '../../components/Logo';
+import logo from '../../public/logo.png';
 
 const AdminLogin = () => {
   const router = useRouter();
@@ -42,7 +43,9 @@ const AdminLogin = () => {
     <>
       <Grid>
         <Grid.Col offsetLg={3} lg={6}>
-          <Logo />
+          <Group align="center" position="center" mb="md">
+            <Image width={150} height={150} src={logo} alt="QuickPass" />
+          </Group>
           <Card>
             <Title sx={{ textAlign: 'center' }} order={2}>
               Admin Login

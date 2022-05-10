@@ -2,12 +2,13 @@ import { Alert, Button, Card, Grid, Group, Loader, Select, Text, Title } from '@
 import { useForm } from '@mantine/form';
 import { debounce } from 'lodash';
 import type { NextPage } from 'next';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { Search } from 'tabler-icons-react';
 import { createFileName, useScreenshot } from 'use-react-screenshot';
 import { Student } from '../api-interface';
-import Logo from '../components/Logo';
 import QrDisplay from '../components/QrDisplay';
+import logo from '../public/logo.png';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -83,7 +84,9 @@ const Home: NextPage = () => {
   return (
     <Grid>
       <Grid.Col offsetLg={3} lg={6}>
-        <Logo />
+        <Group align="center" position="center" mb="sm">
+          <Image width={150} height={150} src={logo} alt="QuickPass" />
+        </Group>
         <Card>
           {!registered ? (
             <>
