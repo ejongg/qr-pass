@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Grid, Group, Loader, Select, Text, Title } from '@mantine/core';
+import { Alert, Button, Card, Center, Grid, Group, Loader, Select, Text, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { debounce } from 'lodash';
 import type { NextPage } from 'next';
@@ -11,12 +11,14 @@ import QrDisplay from '../components/QrDisplay';
 import logo from '../public/logo.png';
 
 const Home: NextPage = () => {
+  const [, takeScreenShot] = useScreenshot();
+  const qrRef = useRef(null);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [students, setStudents] = useState([]);
   const [registered, setRegistered] = useState<Student | null>(null);
-  const [, takeScreenShot] = useScreenshot();
-  const qrRef = useRef(null);
+  const [getStarted, setGetStarted] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -80,6 +82,24 @@ const Home: NextPage = () => {
   };
 
   const downloadScreenshot = () => takeScreenShot(qrRef.current).then(download);
+
+  if (!getStarted) {
+    return (
+      <Center sx={{ height: '80vh' }}>
+        <Group direction="column" align="center" position="center">
+          <Image width={200} height={200} src={logo} alt="QuickPass" />
+          <Button
+            onClick={() => setGetStarted(true)}
+            variant="gradient"
+            gradient={{ from: 'green', to: 'blue' }}
+            size="xl"
+          >
+            Get started
+          </Button>
+        </Group>
+      </Center>
+    );
+  }
 
   return (
     <Grid>
