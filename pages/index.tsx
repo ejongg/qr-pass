@@ -87,13 +87,8 @@ const Home: NextPage = () => {
     return (
       <Center sx={{ height: '80vh' }}>
         <Group direction="column" align="center" position="center">
-          <Image width={200} height={200} src={logo} alt="QuickPass" />
-          <Button
-            onClick={() => setGetStarted(true)}
-            variant="gradient"
-            gradient={{ from: 'green', to: 'blue' }}
-            size="xl"
-          >
+          <Image width={150} height={150} src={logo} alt="QuickPass" />
+          <Button onClick={() => setGetStarted(true)} size="lg" mt="xl" compact>
             Get started
           </Button>
         </Group>
@@ -104,7 +99,7 @@ const Home: NextPage = () => {
   return (
     <Grid>
       <Grid.Col offsetLg={3} lg={6}>
-        <Group align="center" position="center" mb="sm">
+        <Group align="center" position="center" mb="xl">
           <Image width={150} height={150} src={logo} alt="QuickPass" />
         </Group>
         <Card>
