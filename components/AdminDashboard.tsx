@@ -1,4 +1,5 @@
 import { ActionIcon, Card, Center, createStyles, Group, Loader, Table, Text, TextInput } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { format, parseISO } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
@@ -20,6 +21,7 @@ const AdminDashboard = () => {
   const { classes } = useStyles();
   const { students, setStudents } = useContext(studentContext);
   const [{ access_token }] = useCookies(['access_token']);
+  const isMobile = useMediaQuery('(max-width: 500px)', false);
 
   const [filtered, setFiltered] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -95,7 +97,13 @@ const AdminDashboard = () => {
   return (
     <Card mt="md">
       <Group position="apart" mb="lg">
-        <TextInput radius="xl" placeholder="Search" onKeyUp={(e) => search(e.currentTarget.value)} />
+        <TextInput
+          radius="xl"
+          type="search"
+          placeholder="Search"
+          size={isMobile ? 'xs' : 'sm'}
+          onKeyUp={(e) => search(e.currentTarget.value)}
+        />
         <QrScanModal />
       </Group>
       {isLoading ? (

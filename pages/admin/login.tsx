@@ -27,12 +27,12 @@ const AdminLogin = () => {
       });
 
       if (res.status === 200) {
-        router.push('/admin/dashboard');
         const body = await res.json();
         setCookies('access_token', body.accessToken, {
           expires: addHours(new Date(), 1),
           sameSite: true,
         });
+        router.push('/admin/dashboard');
       }
     } finally {
       setIsLoading(false);
