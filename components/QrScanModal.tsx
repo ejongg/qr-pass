@@ -36,12 +36,17 @@ const QrScanModal = () => {
     })();
   };
 
+  const reset = () => {
+    setScanned(false);
+    setSuccess(null);
+  };
+
   return (
     <>
       <Button
         onClick={() => {
-          setScanned(false);
           setIsOpen(true);
+          reset();
         }}
         variant="subtle"
         leftIcon={<Scan />}
@@ -69,7 +74,7 @@ const QrScanModal = () => {
                   <Text align="center">marked as present</Text>
                 </Alert>
               )}
-              <Button onClick={() => setScanned(false)} variant="subtle">
+              <Button onClick={() => reset()} variant="subtle">
                 Scan again
               </Button>
             </Group>
