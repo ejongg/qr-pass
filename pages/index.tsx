@@ -88,7 +88,7 @@ const Home: NextPage = () => {
       <Center sx={{ height: '80vh' }}>
         <Group direction="column" align="center" position="center">
           <Image width={150} height={150} src={logo} alt="QuickPass" />
-          <Button onClick={() => setGetStarted(true)} size="lg" mt="xl" compact>
+          <Button onClick={() => setGetStarted(true)} size="lg" mt="xl">
             Get started
           </Button>
         </Group>
