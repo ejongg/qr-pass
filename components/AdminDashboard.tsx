@@ -1,4 +1,18 @@
-import { ActionIcon, Card, Center, createStyles, Group, Loader, Table, Text, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Card,
+  Center,
+  createStyles,
+  Grid,
+  Group,
+  Loader,
+  Paper,
+  Switch,
+  Table,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { format, parseISO } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
@@ -25,12 +39,37 @@ const AdminDashboard = () => {
 
   const [filtered, setFiltered] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filterPaid, setFilterPaid] = useState(false);
+  const [filterRegistered, setFilterRegistered] = useState(false);
+  const [filterAttended, setFilterAttended] = useState(false);
+  const [searchKey, setSearchKey] = useState<string>('');
+
+  const isPaid = (s: Student) => (filterPaid ? s.paidAt : true);
+  const isRegistered = (s: Student) => (filterRegistered ? s.registeredAt : true);
+  const didAttend = (s: Student) => (filterAttended ? s.attendedAt : true);
+  const isSearched = (s: Student) =>
+    s.name.toLowerCase().includes(searchKey.toLowerCase()) || s.course.toLowerCase().includes(searchKey.toLowerCase());
 
   const search = (value: string) => {
-    const searched = students.filter(
-      (s) => s.name.toLowerCase().includes(value.toLowerCase()) || s.course.toLowerCase().includes(value.toLowerCase())
-    );
-    setFiltered(searched);
+    const isSearched = (s: Student) =>
+      s.name.toLowerCase().includes(value.toLowerCase()) || s.course.toLowerCase().includes(value.toLowerCase());
+
+    setFiltered(students.filter((s) => isPaid(s) && isRegistered(s) && isSearched(s) && didAttend(s)));
+  };
+
+  const filterPaidStudents = (checked: boolean) => {
+    const isPaid = (s: Student) => (checked ? s.paidAt : true);
+    setFiltered(students.filter((s) => isPaid(s) && isRegistered(s) && isSearched(s) && didAttend(s)));
+  };
+
+  const filterRegisteredStudents = (checked: boolean) => {
+    const isRegistered = (s: Student) => (checked ? s.registeredAt : true);
+    setFiltered(students.filter((s) => isRegistered(s) && isPaid(s) && isSearched(s) && didAttend(s)));
+  };
+
+  const filterAttendedStudents = (checked: boolean) => {
+    const didAttend = (s: Student) => (checked ? s.attendedAt : true);
+    setFiltered(students.filter((s) => isRegistered(s) && isPaid(s) && isSearched(s) && didAttend(s)));
   };
 
   const updateStudent = async (student: Student, prop: 'paidAt' | 'attendedAt') => {
@@ -94,35 +133,116 @@ const AdminDashboard = () => {
     </tr>
   ));
 
-  return (
-    <Card mt="md">
-      <Group position="apart" mb="lg">
-        <TextInput
-          radius="xl"
-          type="search"
-          placeholder="Search"
-          size={isMobile ? 'xs' : 'sm'}
-          onKeyUp={(e) => search(e.currentTarget.value)}
-        />
-        <QrScanModal />
-      </Group>
-      {isLoading ? (
+  const render = () => {
+    if (isLoading) {
+      return (
         <Center>
           <Loader />
           <Text ml="md">Loading students...</Text>
         </Center>
-      ) : (
-        <Table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th style={{ textAlign: 'right' }}>Registration</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      )}
-    </Card>
+      );
+    }
+    if (filtered.length === 0) {
+      return (
+        <Center>
+          <Text>No students found</Text>
+        </Center>
+      );
+    }
+    return (
+      <Table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th style={{ textAlign: 'right' }}>Registration</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+    );
+  };
+
+  return (
+    <>
+      <Grid mt="md">
+        <Grid.Col lg={3} span={6}>
+          <Paper p="md" shadow="sm">
+            <Group position="apart">
+              <Text color="blue" size="sm">
+                Registered
+              </Text>
+              <Switch
+                checked={filterRegistered}
+                disabled={isLoading}
+                onChange={(e) => {
+                  setFilterRegistered(e.target.checked);
+                  filterRegisteredStudents(e.target.checked);
+                }}
+              />
+            </Group>
+            <Text color="blue" size="xl" weight="bold">
+              {students.filter((s) => s.registeredAt).length} / {students.length}
+            </Text>
+          </Paper>
+        </Grid.Col>
+        <Grid.Col lg={3} span={6}>
+          <Paper p="md" shadow="sm">
+            <Group position="apart">
+              <Text color="green" size="sm">
+                Paid
+              </Text>
+              <Switch
+                checked={filterPaid}
+                disabled={isLoading}
+                onChange={(e) => {
+                  setFilterPaid(e.target.checked);
+                  filterPaidStudents(e.target.checked);
+                }}
+              />
+            </Group>
+            <Text color="green" size="xl" weight="bold">
+              {students.filter((s) => s.paidAt).length} / {students.length}
+            </Text>
+          </Paper>
+        </Grid.Col>
+        <Grid.Col lg={3} span={6}>
+          <Paper p="md" shadow="sm">
+            <Group position="apart" align="center">
+              <Text color="yellow" size="sm">
+                Attendees
+              </Text>
+              <Switch
+                checked={filterAttended}
+                disabled={isLoading}
+                onChange={(e) => {
+                  setFilterAttended(e.target.checked);
+                  filterAttendedStudents(e.target.checked);
+                }}
+              />
+            </Group>
+            <Text color="yellow" size="xl" weight="bold">
+              {students.filter((s) => s.attendedAt).length} / {students.length}
+            </Text>
+          </Paper>
+        </Grid.Col>
+      </Grid>
+      <Card mt="md">
+        <Group position="apart" mb="lg">
+          <TextInput
+            radius="xl"
+            type="search"
+            placeholder="Search"
+            size={isMobile ? 'xs' : 'sm'}
+            onKeyUp={(e) => {
+              setSearchKey(e.currentTarget.value);
+              search(e.currentTarget.value);
+            }}
+          />
+          <QrScanModal />
+        </Group>
+        {render()}
+      </Card>
+    </>
   );
 };
 
