@@ -118,7 +118,7 @@ const Home: NextPage = () => {
                 <Select
                   searchable
                   clearable
-                  placeholder="Enter your last name. Type atleast 3 letters"
+                  placeholder="First Name / Last Name. Atleast 3 letters"
                   data={students}
                   onSearchChange={debounce(search, 1000)}
                   icon={isFetching ? <Loader size="xs" /> : <Search />}
